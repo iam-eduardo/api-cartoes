@@ -1,0 +1,87 @@
+graph TB
+    subgraph "Clientes Externos"
+        Client[Cliente / Frontend]
+    end
+
+    subgraph "Camada de Apresentação"
+        Controller[CartaoController]
+        Health[HealthController]
+    end
+
+    subgraph "Camada de Aplicação"
+        AppService[CartaoApplicationService]
+        subgraph "DTOs"
+            Req[ClienteRequest]
+            Res[SolicitacaoResponse]
+        end
+        Validator[ClienteValidator]
+        Factory[CartaoFactory]
+    end
+
+    subgraph "Camada de Domínio"
+        DomainService[AvaliacaoCartaoService]
+        subgraph "Entidades"
+            Cliente[Cliente]
+            Cartao[Cartao]
+        end
+        subgraph "Estratégias"
+            Strategy[StrategyAvaliacaoCartao]
+            S1[StrategyClienteJovem]
+            S2[StrategyClienteSPJovemAdulto]
+            S3[StrategyClienteSaoPaulo]
+            S4[StrategyPadrao]
+        end
+    end
+
+    subgraph "Camada de Infraestrutura"
+        Repository[ClienteRepository]
+        RepoImpl[ClienteRepositoryImpl]
+        Config[Configurações]
+        Resilience[Circuit Breaker / Retry]
+    end
+
+    subgraph "Serviços Externos"
+        API[API Cliente Externa]
+    end
+
+    %% Fluxo principal
+    Client -->|HTTP Request| Controller
+    Controller -->|ClienteRequest| AppService
+    AppService -->|Valida| Validator
+    AppService -->|Converte DTO| Cliente
+    AppService -->|Analisa| DomainService
+    DomainService -->|Verifica regras| Strategy
+    
+    %% Estratégias
+    Strategy --> S1
+    Strategy --> S2
+    Strategy --> S3
+    Strategy --> S4
+    
+    %% Avaliação de cartões
+    DomainService -->|Retorna| Cartao
+    AppService -->|Registra cliente| Repository
+    Repository --> RepoImpl
+    RepoImpl -->|Resilience| API
+    
+    %% Resposta
+    AppService -->|Converte| Factory
+    Factory -->|Gera| Res
+    AppService -->|SolicitacaoResponse| Controller
+    Controller -->|HTTP Response| Client
+    
+    %% Health check
+    Client -->|Health Check| Health
+
+    %% Estilo
+    classDef presentation fill:#ffe6cc,stroke:#d79b00
+    classDef application fill:#d5e8d4,stroke:#82b366
+    classDef domain fill:#dae8fc,stroke:#6c8ebf
+    classDef infrastructure fill:#e1d5e7,stroke:#9673a6
+    classDef external fill:#f5f5f5,stroke:#666666
+    
+    class Controller,Health presentation
+    class AppService,Req,Res,Validator,Factory application
+    class DomainService,Cliente,Cartao,Strategy,S1,S2,S3,S4 domain
+    class Repository,RepoImpl,Config,Resilience infrastructure
+    class Client,API external

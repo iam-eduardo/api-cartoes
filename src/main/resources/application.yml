@@ -43,7 +43,7 @@ rest-template:
 
 # Par�metros de negocio configuraveis
 aplicacao:
-  # Configura��es de cliente
+  # Configuraçoes de cliente
   cliente:
     idade-minima: 18
     idade-jovem-maxima: 25       # Clientes com idade < 25 sao considerados jovens
