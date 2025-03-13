@@ -1,0 +1,93 @@
+server:
+  port: 9292
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: cartoes-api
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: cartoes-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.cartoes.api_cartoes.dto
+
+# Configuraçoes para resiliencia
+resilience4j:
+  circuitbreaker:
+    instances:
+      clienteService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+  retry:
+    instances:
+      clienteService:
+        maxAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+
+# Configuraçoes para timeout
+rest-template:
+  connection-timeout: 2000
+  read-timeout: 2000
+
+# Par�metros de negocio configuraveis
+aplicacao:
+  # Configura��es de cliente
+  cliente:
+    idade-minima: 18
+    idade-jovem-maxima: 25       # Clientes com idade < 25 sao considerados jovens
+    sp-jovem-adulto-idade-min: 25  # Clientes com idade >= 25 e < 30 sao jovens adultos
+    sp-jovem-adulto-idade-max: 30
+
+  # Configurações de estados
+  estados:
+    sao-paulo: SP
+
+  # Configurações de faixas de renda
+  renda:
+    faixa-baixa-min: 1000.00
+    faixa-baixa-max: 3000.00
+    faixa-media-min: 3000.00
+    faixa-media-max: 5000.00
+    faixa-alta-min: 5000.00
+
+  # Configurações de cartões
+  cartoes:
+    sem-anuidade:
+      limite: 1000.00
+      renda-minima: 1000.00    # Ajustado para permitir clientes com renda a partir de R$ 1000
+      anuidade: 0.00
+    parceiros:
+      limite: 3000.00
+      renda-minima: 3000.00    # Ajustado para permitir clientes com renda a partir de R$ 3000
+      anuidade: 20.00
+    cashback:
+      limite: 5000.00
+      renda-minima: 5000.00    # Ajustado para permitir clientes com renda a partir de R$ 5000
+      anuidade: 15.00
+
+# URL da API de cliente
+api:
+  cliente:
+    url: ${API_CLIENTE_URL:http://localhost:8081/api/clientes}
+
+# Configuraçao do Actuator para monitoramento
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
