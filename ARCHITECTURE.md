@@ -201,7 +201,7 @@ Esta abordagem garante que as validações sejam aplicadas no nível apropriado.
 
 ### Injeção de Dependência
 
-Utilizamos injeção de dependência via construtor com `@RequiredArgsConstructor` do Lombok:
+Foi implementada injeção de dependência via construtor com `@RequiredArgsConstructor` do Lombok:
 
 ```java
 
@@ -221,7 +221,7 @@ public class ServiceImpl implements Service {
 
 ### Imutabilidade
 
-Utilizamos objetos imutáveis sempre que possível:
+Foram utilizados objetos imutáveis sempre que possível:
 
 - DTOs com Lombok `@Builder` para criação
 - Entidades protegidas contra modificação após criação
@@ -229,7 +229,7 @@ Utilizamos objetos imutáveis sempre que possível:
 
 ### Logging Estruturado
 
-Implementamos logging estruturado com SLF4J e Logback:
+Foram implementados logging estruturado com SLF4J e Logback:
 
 ```java
 log.info("Processando solicitação para cliente: {}",cliente.getCpf());
@@ -257,7 +257,7 @@ aplicacao:
 
 ### Docker Multi-stage Build
 
-Implementamos um Dockerfile com build multi-estágio:
+Foi implementado um Dockerfile com build multi-estágio:
 
 ```dockerfile
 # Estágio de compilação
@@ -277,7 +277,7 @@ FROM eclipse-temurin:22-jre-alpine
 
 ### Healthchecks
 
-Implementamos endpoints específicos para observabilidade:
+Foram implementado endpoints específicos para observabilidade:
 
 - `/health` - Status geral da aplicação
 - `/health/liveness` - Verificação se a aplicação está viva
@@ -285,7 +285,7 @@ Implementamos endpoints específicos para observabilidade:
 
 ### Documentação da API
 
-Integramos Springdoc OpenAPI (Swagger) para documentação automática:
+Adicionada Springdoc OpenAPI (Swagger) para documentação automática:
 
 ```java
 @Operation(summary = "Solicitar cartão de crédito",
@@ -336,7 +336,7 @@ A arquitetura foi projetada para permitir as seguintes evoluções:
 
 ## Compromissos Arquiteturais
 
-Todo design arquitetural envolve compromissos (trade-offs). Destacamos os principais:
+Todo design arquitetural envolve compromissos (trade-offs). Os principais que destaco são:
 
 1. **Complexidade vs. Flexibilidade**:
     - A separação em múltiplas camadas aumenta a complexidade inicial
