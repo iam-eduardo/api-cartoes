@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/api/clientes"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id_cliente": "b5d7d8e3-5c8a-4d1b-9c3e-7a8b6f5d4e2c"
+    }
+  }
+}
